@@ -1,0 +1,8 @@
+{
+  "name": "Smart POS",
+  "description": "A modern premium billing system application with an authentication flow, a dynamic category system, and an admin panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

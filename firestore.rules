@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Users Collection & Subcollections (e.g. products) ---
+    // Allow authenticated users to create and write user profiles and products
+    match /users/{userId} {
+      allow read, write, create, update: if request.auth != null;
+      match /{allSubcollections=**} {
+        allow read, write, create, update, delete: if request.auth != null;
+      }
+    }
+
+    // --- Categories Collection ---
+    // Anyone authenticated can read and manage categories
+    match /categories/{categoryId} {
+      allow read, write, create, update, delete: if request.auth != null;
+    }
+
+    // --- Invoices Collection ---
+    // Authenticated users can read and write invoices
+    match /invoices/{invoiceId} {
+      allow read, write, create, update, delete: if request.auth != null;
+    }
+  }
+}

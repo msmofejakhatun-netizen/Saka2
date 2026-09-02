@@ -12,20 +12,22 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -49,11 +51,7 @@ import androidx.credentials.exceptions.GetCredentialCustomException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
 import com.example.R
-import com.example.ui.components.GlassmorphicCard
-import com.example.ui.components.PremiumGradientBackground
-import com.example.ui.components.PremiumLoadingState
-import com.example.ui.theme.EmeraldGreen
-import com.example.ui.theme.EmeraldLight
+import com.example.ui.theme.*
 import com.example.ui.viewmodel.BillingViewModel
 import com.example.util.WebUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -116,14 +114,18 @@ fun LoginScreen(
         }
     }
 
-    PremiumGradientBackground {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VyaparBg)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .verticalScroll(scrollState)
-                .padding(24.dp),
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -132,7 +134,7 @@ fun LoginScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 12.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     IconButton(
@@ -145,72 +147,65 @@ fun LoginScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = VyaparTextPrimary
                         )
                     }
                 }
             }
 
-            // Visual Banner Frame
-            Card(
+            // 1. Clean Branded Header: App Logo Icon in Vyapar Red
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .testTag("login_hero_card"),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    .size(64.dp)
+                    .background(Color(0xFFFFEBEE), CircleShape)
+                    .border(2.dp, Color(0xFFFFCDD2), CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_billing_hero),
-                        contentDescription = "Billing Hero Banner",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color(0xBB090D22),
-                                        Color(0xFF090D22)
-                                    )
-                                )
-                            )
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Storefront,
+                    contentDescription = "SmartPOS Logo",
+                    tint = VyaparRed,
+                    modifier = Modifier.size(34.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // Heading Title
+            // Title: "SmartPOS Billing" / "Verify OTP" in Bold Dark Text
             Text(
-                text = if (viewModel.isOtpSent) "Verify OTP" else "Secure Access",
-                style = MaterialTheme.typography.displaySmall.copy(
+                text = if (viewModel.isOtpSent) "Verify OTP" else "SmartPOS Billing",
+                style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    letterSpacing = 0.5.sp
+                    color = VyaparTextPrimary,
+                    fontSize = 24.sp
                 ),
+                textAlign = TextAlign.Center,
                 modifier = Modifier.testTag("login_screen_title")
             )
 
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Subtitle
             Text(
                 text = if (viewModel.isOtpSent) {
                     "Enter the 6-digit verification code sent to ${viewModel.authMobile}"
                 } else {
-                    "Log in or Register with Phone OTP or Google Account"
+                    "Enter your mobile number to get started"
                 },
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF94A3B8),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = 13.sp,
+                    color = VyaparTextSecondary
+                ),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
+                modifier = Modifier.padding(bottom = 20.dp)
             )
 
-            // Glassmorphic Form Card
-            GlassmorphicCard(
+            // Clean White Business Form Card
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = VyaparSurface),
+                border = BorderStroke(1.dp, VyaparBorder),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("login_form_card")
@@ -218,7 +213,7 @@ fun LoginScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
+                        .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Validation Errors
@@ -228,22 +223,31 @@ fun LoginScreen(
                         exit = fadeOut()
                     ) {
                         viewModel.authError?.let { error ->
-                            Text(
-                                text = error,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
+                            Surface(
+                                color = Color(0xFFFFEBEE),
+                                shape = RoundedCornerShape(8.dp),
+                                border = BorderStroke(1.dp, Color(0xFFFFCDD2)),
                                 modifier = Modifier
+                                    .fillMaxWidth()
                                     .padding(bottom = 16.dp)
-                                    .testTag("login_error_text")
-                            )
+                            ) {
+                                Text(
+                                    text = error,
+                                    color = VyaparRed,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .testTag("login_error_text")
+                                )
+                            }
                         }
                     }
 
                     if (!viewModel.isOtpSent) {
                         // --- SCREEN 1: Mobile Input & Google Sign-In ---
                         
-                        // Mobile Field with Prefix label
+                        // Mobile Field with Prefix label & High-contrast Text
                         OutlinedTextField(
                             value = mobileNumberInput,
                             onValueChange = { input ->
@@ -251,35 +255,53 @@ fun LoginScreen(
                                     mobileNumberInput = input
                                 }
                             },
-                            label = { Text("Mobile Number", color = Color(0xFF94A3B8)) },
+                            label = { Text("Mobile Number") },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Phone,
                                     contentDescription = "Phone Icon",
-                                    tint = EmeraldGreen
+                                    tint = VyaparRed
                                 )
+                            },
+                            trailingIcon = {
+                                if (mobileNumberInput.length == 10) {
+                                    Icon(
+                                        imageVector = Icons.Default.CheckCircle,
+                                        contentDescription = "Valid",
+                                        tint = VyaparSuccess,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
                             },
                             prefix = {
                                 Text(
                                     text = "+91 ",
-                                    color = Color.White,
+                                    color = Color(0xFF1E293B),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp
                                 )
                             },
+                            textStyle = TextStyle(
+                                color = Color(0xFF1E293B),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = EmeraldGreen,
-                                unfocusedBorderColor = Color(0x33FFFFFF),
-                                focusedLabelColor = EmeraldGreen,
-                                unfocusedLabelColor = Color(0xFF94A3B8),
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedContainerColor = Color(0x0AFFFFFF),
-                                unfocusedContainerColor = Color(0x05FFFFFF)
+                                focusedTextColor = Color(0xFF1E293B),
+                                unfocusedTextColor = Color(0xFF1E293B),
+                                focusedContainerColor = Color(0xFFF8FAFC),
+                                unfocusedContainerColor = Color(0xFFF8FAFC),
+                                focusedBorderColor = Color(0xFFD32F2F),
+                                unfocusedBorderColor = Color(0xFFCBD5E1),
+                                cursorColor = Color(0xFFD32F2F),
+                                focusedLabelColor = Color(0xFFD32F2F),
+                                unfocusedLabelColor = Color(0xFF64748B),
+                                focusedLeadingIconColor = Color(0xFFD32F2F),
+                                unfocusedLeadingIconColor = Color(0xFF64748B)
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                             singleLine = true,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("login_mobile_input")
@@ -288,17 +310,17 @@ fun LoginScreen(
                         // Subtitle / helper text below input field
                         Text(
                             text = "A 6-digit verification OTP will be sent to your mobile number via SMS",
-                            color = Color(0xFF94A3B8),
-                            fontSize = 12.sp,
+                            color = Color(0xFF64748B),
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Normal,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 6.dp, start = 4.dp)
                         )
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(18.dp))
 
-                        // Get OTP Button
+                        // Get OTP Button: Solid Vyapar Red (#D32F2F) with Pure White Text
                         val currentActivity = context.findActivity() ?: (context as? Activity)
                         Button(
                             onClick = {
@@ -315,42 +337,41 @@ fun LoginScreen(
                                 }
                             },
                             enabled = mobileNumberInput.length == 10 && !viewModel.isSendingOtp,
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                            contentPadding = PaddingValues(),
-                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = VyaparRed,
+                                disabledContainerColor = Color(0xFFE2E8F0)
+                            ),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(52.dp)
+                                .height(50.dp)
                                 .testTag("login_submit_button")
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        Brush.horizontalGradient(
-                                            colors = listOf(
-                                                Color(0xFF8B5CF6), // Electric Violet
-                                                Color(0xFF10B981)  // Emerald Green
-                                            )
-                                        )
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (viewModel.isSendingOtp) {
-                                    PremiumLoadingState(text = "Sending OTP...")
-                                } else {
-                                    Text(
-                                        text = "GET OTP",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White,
-                                        letterSpacing = 1.sp
-                                    )
-                                }
+                            if (viewModel.isSendingOtp) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Sending OTP...",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            } else {
+                                Text(
+                                    text = "GET OTP",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (mobileNumberInput.length == 10) Color.White else Color(0xFF94A3B8),
+                                    letterSpacing = 0.5.sp
+                                )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         // OR divider
                         Row(
@@ -359,24 +380,24 @@ fun LoginScreen(
                         ) {
                             HorizontalDivider(
                                 modifier = Modifier.weight(1f),
-                                color = Color(0x22FFFFFF)
+                                color = Color(0xFFE2E8F0)
                             )
                             Text(
                                 text = "OR",
-                                color = Color(0xFF64748B),
-                                fontSize = 12.sp,
+                                color = Color(0xFF94A3B8),
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                modifier = Modifier.padding(horizontal = 14.dp)
                             )
                             HorizontalDivider(
                                 modifier = Modifier.weight(1f),
-                                color = Color(0x22FFFFFF)
+                                color = Color(0xFFE2E8F0)
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(18.dp))
 
-                        // Official Google Sign-In Button
+                        // Google Sign-In Button
                         OutlinedButton(
                             onClick = {
                                 coroutineScope.launch {
@@ -445,12 +466,12 @@ fun LoginScreen(
                                     }
                                 }
                             },
-                            shape = RoundedCornerShape(12.dp),
-                            border = BorderStroke(1.dp, Color(0x33FFFFFF)),
-                            colors = ButtonDefaults.outlinedButtonColors(containerColor = Color(0x05FFFFFF)),
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, Color(0xFFCBD5E1)),
+                            colors = ButtonDefaults.outlinedButtonColors(containerColor = Color(0xFFF8FAFC)),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
+                                .height(48.dp)
                                 .testTag("login_google_button")
                         ) {
                             Row(
@@ -460,19 +481,19 @@ fun LoginScreen(
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_google_logo),
                                     contentDescription = "Google Logo",
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(18.dp)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
                                 Text(
                                     text = "Continue with Google",
-                                    color = Color.White,
+                                    color = Color(0xFF1E293B),
                                     fontWeight = FontWeight.SemiBold,
-                                    fontSize = 15.sp
+                                    fontSize = 14.sp
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(18.dp))
 
                         // Legal Consent Text
                         LegalConsentText()
@@ -487,35 +508,44 @@ fun LoginScreen(
                                     otpInput = input
                                 }
                             },
-                            label = { Text("Enter 6-Digit OTP", color = Color(0xFF94A3B8)) },
+                            label = { Text("Enter 6-Digit OTP") },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Lock,
                                     contentDescription = "OTP Icon",
-                                    tint = EmeraldGreen
+                                    tint = VyaparRed
                                 )
                             },
+                            textStyle = TextStyle(
+                                color = Color(0xFF1E293B),
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 4.sp
+                            ),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = EmeraldGreen,
-                                unfocusedBorderColor = Color(0x33FFFFFF),
-                                focusedLabelColor = EmeraldGreen,
-                                unfocusedLabelColor = Color(0xFF94A3B8),
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedContainerColor = Color(0x0AFFFFFF),
-                                unfocusedContainerColor = Color(0x05FFFFFF)
+                                focusedTextColor = Color(0xFF1E293B),
+                                unfocusedTextColor = Color(0xFF1E293B),
+                                focusedContainerColor = Color(0xFFF8FAFC),
+                                unfocusedContainerColor = Color(0xFFF8FAFC),
+                                focusedBorderColor = Color(0xFFD32F2F),
+                                unfocusedBorderColor = Color(0xFFCBD5E1),
+                                cursorColor = Color(0xFFD32F2F),
+                                focusedLabelColor = Color(0xFFD32F2F),
+                                unfocusedLabelColor = Color(0xFF64748B),
+                                focusedLeadingIconColor = Color(0xFFD32F2F),
+                                unfocusedLeadingIconColor = Color(0xFF64748B)
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                             singleLine = true,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("login_otp_input")
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        // Verify & Proceed Button
+                        // Verify & Proceed Button: Solid Vyapar Red (#D32F2F) with Pure White Text
                         Button(
                             onClick = {
                                 viewModel.verifyOtp(
@@ -524,56 +554,55 @@ fun LoginScreen(
                                 )
                             },
                             enabled = otpInput.length == 6 && !viewModel.isVerifyingOtp,
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                            contentPadding = PaddingValues(),
-                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = VyaparRed,
+                                disabledContainerColor = Color(0xFFE2E8F0)
+                            ),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(52.dp)
+                                .height(50.dp)
                                 .testTag("login_verify_button")
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        Brush.horizontalGradient(
-                                            colors = listOf(
-                                                Color(0xFF8B5CF6), // Electric Violet
-                                                Color(0xFF10B981)  // Emerald Green
-                                            )
-                                        )
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (viewModel.isVerifyingOtp) {
-                                    PremiumLoadingState(text = "Verifying...")
-                                } else {
-                                    Text(
-                                        text = "VERIFY OTP",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White,
-                                        letterSpacing = 1.sp
-                                    )
-                                }
+                            if (viewModel.isVerifyingOtp) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Verifying...",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            } else {
+                                Text(
+                                    text = "VERIFY & PROCEED",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (otpInput.length == 6) Color.White else Color(0xFF94A3B8),
+                                    letterSpacing = 0.5.sp
+                                )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(18.dp))
 
                         // Resend Section
                         if (viewModel.timerSeconds > 0) {
                             Text(
                                 text = "Resend OTP in ${viewModel.timerSeconds}s",
                                 color = Color(0xFF64748B),
-                                fontSize = 14.sp,
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium
                             )
                         } else {
                             val currentActivity = context.findActivity() ?: (context as? Activity)
                             Text(
                                 text = "Resend OTP",
-                                color = EmeraldGreen,
+                                color = VyaparRed,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 modifier = Modifier
@@ -590,18 +619,18 @@ fun LoginScreen(
                                             )
                                         }
                                     }
-                                    .padding(8.dp)
+                                    .padding(6.dp)
                                     .testTag("login_resend_otp_button")
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         // Change Mobile Link
                         Text(
                             text = "Change Mobile Number",
-                            color = Color(0xFF94A3B8),
-                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFF64748B),
+                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                             modifier = Modifier
                                 .clickable {
                                     viewModel.isOtpSent = false
@@ -610,7 +639,7 @@ fun LoginScreen(
                                 .padding(vertical = 4.dp)
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
 
                         // Legal Consent Text
                         LegalConsentText()
@@ -630,14 +659,14 @@ fun LegalConsentText(
     val privacyTag = "PRIVACY"
 
     val annotatedString = buildAnnotatedString {
-        withStyle(style = SpanStyle(color = Color(0xFF94A3B8), fontSize = 12.sp)) {
+        withStyle(style = SpanStyle(color = Color(0xFF64748B), fontSize = 11.sp)) {
             append("By continuing, you agree to our ")
         }
         pushStringAnnotation(tag = termsTag, annotation = WebUtils.TERMS_URL)
         withStyle(
             style = SpanStyle(
-                color = Color(0xFF2DD4BF),
-                fontSize = 12.sp,
+                color = VyaparRed,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 textDecoration = TextDecoration.Underline
             )
@@ -645,14 +674,14 @@ fun LegalConsentText(
             append("Terms & Conditions")
         }
         pop()
-        withStyle(style = SpanStyle(color = Color(0xFF94A3B8), fontSize = 12.sp)) {
+        withStyle(style = SpanStyle(color = Color(0xFF64748B), fontSize = 11.sp)) {
             append(" and ")
         }
         pushStringAnnotation(tag = privacyTag, annotation = WebUtils.PRIVACY_URL)
         withStyle(
             style = SpanStyle(
-                color = Color(0xFF2DD4BF),
-                fontSize = 12.sp,
+                color = VyaparRed,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 textDecoration = TextDecoration.Underline
             )
@@ -666,12 +695,12 @@ fun LegalConsentText(
         text = annotatedString,
         style = TextStyle(
             textAlign = TextAlign.Center,
-            fontSize = 12.sp,
-            lineHeight = 16.sp
+            fontSize = 11.sp,
+            lineHeight = 15.sp
         ),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 4.dp)
             .testTag("login_legal_consent_text"),
         onClick = { offset ->
             annotatedString.getStringAnnotations(tag = termsTag, start = offset, end = offset).firstOrNull()?.let {
@@ -692,3 +721,4 @@ private fun android.content.Context.findActivity(): Activity? {
     }
     return null
 }
+

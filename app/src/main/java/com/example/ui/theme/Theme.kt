@@ -30,11 +30,15 @@ private val LightColorScheme = lightColorScheme(
     onError = Color.White
 )
 
+// Vyapar Red/White Theme Color Constants
+val VyaparPrimary = VyaparRed
+val VyaparSecondary = VyaparDeepBlue
+
 private val DarkColorScheme = LightColorScheme
 
 @Composable
-fun MyApplicationTheme(
-    darkTheme: Boolean = false, // Clean Business Red & White Theme by default
+fun SmartPOSTheme(
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = LightColorScheme
@@ -44,5 +48,13 @@ fun MyApplicationTheme(
         typography = Typography,
         content = content
     )
+}
+
+@Composable
+fun MyApplicationTheme(
+    darkTheme: Boolean = false, // Clean Business Red & White Theme by default
+    content: @Composable () -> Unit
+) {
+    SmartPOSTheme(darkTheme = darkTheme, content = content)
 }
 
